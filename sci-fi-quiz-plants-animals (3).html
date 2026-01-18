@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Kru Pai Classroom | Sci-Fi Biology Quiz</title>
+  <style>
+    :root{
+      --bg1:#070a12;
+      --bg2:#0b1530;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.12);
+      --line: rgba(255,255,255,.14);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.68);
+      --neon1:#00e5ff;
+      --neon2:#ff3dff;
+      --good:#25ff9a;
+      --bad:#ff4d5a;
+      --warn:#ffd84d;
+      --shadow: 0 18px 55px rgba(0,0,0,.55);
+      --radius: 18px;
+
+      /* NEW: option text color (light blue) */
+      --optText:#bfe8ff;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      color:var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans Thai", "Helvetica Neue", Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 10%, rgba(0,229,255,.18), transparent 60%),
+                  radial-gradient(1200px 800px at 80% 20%, rgba(255,61,255,.14), transparent 60%),
+                  radial-gradient(900px 700px at 50% 90%, rgba(37,255,154,.10), transparent 60%),
+                  linear-gradient(160deg, var(--bg1), var(--bg2));
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* Animated sci-fi grid */
+    .grid{
+      position:fixed; inset:-20% -20%;
+      background:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      transform: perspective(900px) rotateX(55deg) translateY(30px);
+      filter: drop-shadow(0 0 14px rgba(0,229,255,.18));
+      opacity:.25;
+      pointer-events:none;
+      animation: gridMove 12s linear infinite;
+    }
+    @keyframes gridMove{
+      0%{ background-position: 0 0, 0 0; }
+      100%{ background-position: 0 300px, 300px 0; }
+    }
+
+    /* Floating particles */
+    .particle{
+      position:fixed;
+      width: 6px; height: 6px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,0));
+      opacity:.35;
+      filter: drop-shadow(0 0 10px rgba(0,229,255,.35));
+      pointer-events:none;
+      animation: floatUp linear infinite;
+    }
+    @keyframes floatUp{
+      from { transform: translateY(30vh); opacity:0; }
+      10% { opacity:.35; }
+      to   { transform: translateY(-140vh); opacity:0; }
+    }
+
+    .wrap{
+      width:min(980px, 92vw);
+      margin: 28px auto 70px;
+      position:relative;
+      z-index:2;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom: 18px;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .logo{
+      width:46px; height:46px;
+      border-radius: 14px;
+      background:
+        radial-gradient(circle at 30% 30%, rgba(0,229,255,.95), rgba(0,229,255,.06) 60%),
+        radial-gradient(circle at 70% 60%, rgba(255,61,255,.7), rgba(255,61,255,.06) 55%),
+        linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.03));
+      box-shadow: 0 0 22px rgba(0,229,255,.18), 0 0 35px rgba(255,61,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-30%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.28), transparent);
+      transform: rotate(18deg);
+      animation: shine 2.6s ease-in-out infinite;
+    }
+    @keyframes shine{
+      0%{ transform: translateX(-60%) rotate(18deg); opacity:.0; }
+      35%{ opacity:.55; }
+      100%{ transform: translateX(60%) rotate(18deg); opacity:0; }
+    }
+
+    .brand h1{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:.2px;
+      line-height:1.15;
+    }
+    .brand p{
+      margin:3px 0 0;
+      font-size: 12.8px;
+      color: var(--muted);
+    }
+
+    .top-controls{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      padding: 12px 14px;
+      border-radius: 14px;
+      cursor:pointer;
+      font-weight: 700;
+      letter-spacing:.2px;
+      transition: transform .12s ease, background .12s ease, box-shadow .12s ease, border-color .12s ease;
+      box-shadow: 0 14px 35px rgba(0,0,0,.35);
+      backdrop-filter: blur(10px);
+      user-select:none;
+    }
+    .btn:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.28); }
+    .btn:active{ transform: translateY(0); }
+
+    .btn-primary{
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0,229,255,.38), rgba(0,229,255,.08) 45%),
+        radial-gradient(circle at 80% 60%, rgba(255,61,255,.22), rgba(255,61,255,.06) 60%),
+        linear-gradient(135deg, rgba(255,255,255,.16), rgba(255,255,255,.06));
+      border-color: rgba(0,229,255,.28);
+      box-shadow: 0 18px 48px rgba(0,0,0,.42), 0 0 18px rgba(0,229,255,.14);
+    }
+
+    .btn-ghost{
+      background: transparent;
+      border-color: rgba(255,255,255,.16);
+      box-shadow:none;
+    }
+
+    .toggle{
+      display:flex; gap:8px; align-items:center;
+      font-size: 13px;
+      color:var(--muted);
+    }
+    .toggle button{
+      padding:8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color:var(--text);
+      cursor:pointer;
+      font-weight: 800;
+    }
+    .toggle button.active{
+      border-color: rgba(0,229,255,.55);
+      box-shadow: 0 0 0 2px rgba(0,229,255,.12) inset, 0 0 18px rgba(0,229,255,.12);
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(1200px 500px at 20% 10%, rgba(0,229,255,.14), transparent 60%),
+                  radial-gradient(900px 500px at 80% 30%, rgba(255,61,255,.12), transparent 60%);
+      opacity:.9;
+      pointer-events:none;
+    }
+    .card > *{ position:relative; z-index:1; }
+
+    .screen{
+      display:none;
+      padding: 22px;
+    }
+    .screen.active{ display:block; }
+
+    .title{
+      display:flex; align-items:flex-start; justify-content:space-between;
+      gap:14px; flex-wrap:wrap;
+      margin-bottom: 10px;
+    }
+    .title h2{
+      margin:0;
+      font-size: 22px;
+      letter-spacing:.2px;
+    }
+    .title .tag{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      font-size: 12px;
+      color: rgba(255,255,255,.78);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .title .tag b{ color:var(--neon1); }
+
+    .sub{
+      margin: 0 0 18px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14.3px;
+    }
+
+    .row{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 16px;
+    }
+    @media (max-width: 860px){
+      .row{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      padding: 18px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px;
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      margin-top: 10px;
+    }
+    label{
+      font-size: 13px;
+      color: rgba(255,255,255,.78);
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    input[type="text"]{
+      width:100%;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      font-size: 16px;
+      outline:none;
+    }
+    input[type="text"]::placeholder{ color: rgba(255,255,255,.45); }
+
+    .start-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+
+    .hud{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding: 14px 18px;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+    .hud .left{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      color: rgba(255,255,255,.86);
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    .hud .left .badge{
+      padding: 6px 10px;
+      border:1px solid rgba(255,255,255,.14);
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+    }
+    .hud .bar{
+      height:10px;
+      width: min(360px, 80vw);
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:hidden;
+    }
+    .hud .bar > div{
+      height:100%;
+      width:0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(0,229,255,.9), rgba(255,61,255,.85));
+      box-shadow: 0 0 18px rgba(0,229,255,.18);
+      transition: width .25s ease;
+    }
+
+    .q-area{
+      padding: 18px;
+    }
+    .q-title{
+      font-size: 22px;
+      line-height:1.45;
+      margin: 0 0 12px;
+      font-weight: 900;
+      letter-spacing:.1px;
+    }
+    .q-meta{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 12px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .options{
+      display:grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .opt{
+      text-align:left;
+      font-size: 22px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.20);
+      cursor:pointer;
+      font-weight: 850;
+      line-height:1.35;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+      position:relative;
+      overflow:hidden;
+
+      /* NEW: make option text light blue */
+      color: var(--optText);
+    }
+    .opt:hover{
+      transform: translateY(-1px);
+      border-color: rgba(0,229,255,.35);
+      box-shadow: 0 0 0 2px rgba(0,229,255,.08) inset, 0 18px 40px rgba(0,0,0,.35);
+    }
+    .opt:disabled{ cursor:not-allowed; opacity:.95; transform:none; }
+
+    /* Ensure contrast when marked correct/wrong */
+    .opt.correct{
+      border-color: rgba(37,255,154,.55);
+      box-shadow: 0 0 0 2px rgba(37,255,154,.12) inset, 0 0 22px rgba(37,255,154,.12);
+      background: rgba(37,255,154,.10);
+      color: rgba(255,255,255,.95);
+    }
+    .opt.wrong{
+      border-color: rgba(255,77,90,.55);
+      box-shadow: 0 0 0 2px rgba(255,77,90,.12) inset, 0 0 22px rgba(255,77,90,.10);
+      background: rgba(255,77,90,.08);
+      color: rgba(255,255,255,.95);
+    }
+
+    .feedback{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .emoji{
+      font-size: 28px;
+      filter: drop-shadow(0 0 14px rgba(0,229,255,.18));
+    }
+    .fb-text{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+    .fb-text b{ font-size: 14.5px; }
+    .fb-text span{ color: var(--muted); font-size: 13px; font-weight: 700; }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+      margin-top: 14px;
+    }
+
+    .result{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      padding: 18px;
+    }
+    .scorebox{
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.14);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(0,229,255,.18), transparent 55%),
+        radial-gradient(circle at 80% 30%, rgba(255,61,255,.14), transparent 55%),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      box-shadow: 0 22px 60px rgba(0,0,0,.50), 0 0 22px rgba(0,229,255,.10);
+      position:relative;
+      overflow:hidden;
+    }
+    .scorebox:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,.20), transparent);
+      transform: rotate(12deg);
+      animation: shine 2.8s ease-in-out infinite;
+      opacity:.55;
+      pointer-events:none;
+    }
+    .score-top{
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+      margin-bottom: 8px;
+    }
+    .player{
+      font-weight: 1000;
+      letter-spacing:.2px;
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .player .chip{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: rgba(255,255,255,.86);
+    }
+    .big-score{
+      font-size: 44px;
+      font-weight: 1000;
+      letter-spacing:.5px;
+      margin: 10px 0 6px;
+      line-height:1;
+      background: linear-gradient(90deg, rgba(0,229,255,.95), rgba(255,61,255,.90));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 16px rgba(0,229,255,.12));
+    }
+    .result-msg{
+      font-size: 14px;
+      color: rgba(255,255,255,.80);
+      font-weight: 800;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .review{
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.18);
+      display:none;
+    }
+    .review.active{ display:block; }
+    .review h3{
+      margin:0 0 10px;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .qa{
+      border-top: 1px solid rgba(255,255,255,.10);
+      padding: 12px 0;
+      display:grid;
+      gap: 6px;
+    }
+    .qa:first-of-type{ border-top:none; padding-top:0; }
+    .qa .q{
+      font-weight: 900;
+      line-height: 1.45;
+      font-size: 14px;
+    }
+    .qa .a{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      color: rgba(255,255,255,.85);
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+    .mark{
+      font-size: 14px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+    }
+    .mark.ok{ border-color: rgba(37,255,154,.45); background: rgba(37,255,154,.10); }
+    .mark.no{ border-color: rgba(255,77,90,.45); background: rgba(255,77,90,.10); }
+    .dim{ color: var(--muted); font-weight: 700; }
+
+    footer{
+      margin-top: 18px;
+      color: rgba(255,255,255,.55);
+      font-size: 12px;
+      text-align:center;
+    }
+
+    /* small helper */
+    .hide{ display:none !important; }
+  
+    .emoji-overlay{
+      position:fixed;
+      inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:120px;
+      z-index:9999;
+      pointer-events:none;
+      animation: popFade .6s ease forwards;
+    }
+    @keyframes popFade{
+      0%{ transform:scale(.4); opacity:0; }
+      40%{ transform:scale(1.1); opacity:1; }
+      100%{ transform:scale(1); opacity:0; }
+    }
+
+</style>
+</head>
+<body>
+  <div class="grid"></div>
+
+  <!-- particles -->
+  <script>
+    // Create some floating particles (lightweight)
+    (function(){
+      const count = 18;
+      for(let i=0;i<count;i++){
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const left = Math.random()*100;
+        const size = 4 + Math.random()*6;
+        const dur = 10 + Math.random()*16;
+        const delay = -Math.random()*dur;
+        p.style.left = left + 'vw';
+        p.style.bottom = (-20 + Math.random()*60) + 'vh';
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.animationDuration = dur + 's';
+        p.style.animationDelay = delay + 's';
+        p.style.opacity = (0.18 + Math.random()*0.35).toFixed(2);
+        document.body.appendChild(p);
+      }
+    })();
+  
+    // --- Click sound (Web Audio API) ---
+    function playClickSound(ok=true){
+      try{
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = ok ? "sine" : "square";
+        osc.frequency.value = ok ? 880 : 220;
+        gain.gain.value = 0.15;
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.15);
+      }catch(e){}
+    }
+
+
+    // --- Background Sci‑Fi ambience ---
+    let bgCtx, bgOsc, bgGain;
+    function startBgSound(){
+      try{
+        bgCtx = new (window.AudioContext || window.webkitAudioContext)();
+        bgOsc = bgCtx.createOscillator();
+        bgGain = bgCtx.createGain();
+        bgOsc.type = "sawtooth";
+        bgOsc.frequency.value = 60; // low hum
+        bgGain.gain.value = 0.03;   // very soft
+        bgOsc.connect(bgGain);
+        bgGain.connect(bgCtx.destination);
+        bgOsc.start();
+      }catch(e){}
+    }
+    function stopBgSound(){
+      try{ if(bgOsc) bgOsc.stop(); }catch(e){}
+    }
+
+</script>
+
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>Kru Pai Classroom • Sci-Fi Biology Quiz</h1>
+          <p id="subtitle">พืช 15 ข้อ + สัตว์ 15 ข้อ • 4 ตัวเลือก • มีเฉลยหลังจบ</p>
+        </div>
+      </div>
+
+      <div class="top-controls">
+        <div class="pill toggle" aria-label="Language toggle">
+          <span id="langLabel">ภาษา</span>
+          <button id="btnTH" class="active" type="button">TH</button>
+          <button id="btnEN" type="button">EN</button>
+        </div>
+        <button id="btnHomeTop" class="btn btn-ghost hide" type="button">⟵ หน้าแรก</button>
+      </div>
+    </header>
+
+    <div class="card">
+      <!-- START SCREEN -->
+      <section id="screenStart" class="screen active">
+        <div class="title">
+          <div>
+            <h2 id="startTitle">🚀 ภารกิจชีววิทยา: โหมดไซไฟ</h2>
+            <p id="startSub" class="sub">
+              ทำให้ครบ 30 ข้อ แล้วดูคะแนน+เฉลยแบบจ๊าบๆ ได้เลย!
+            </p>
+          </div>
+          <div class="tag"><b>30</b> <span id="tagQ">ข้อ</span> • <span id="tag4">4 ตัวเลือก</span> • <span id="tag2L">2 ภาษา</span></div>
+        </div>
+
+        <div class="row">
+          <div class="panel">
+            <div class="field">
+              <label id="nameLabel" for="playerName">ชื่อผู้เล่น</label>
+              <input id="playerName" type="text" maxlength="30" placeholder="พิมพ์ชื่อของคุณ..." autocomplete="nickname" />
+            </div>
+
+            <div class="start-actions">
+              <button id="btnStart" class="btn btn-primary" type="button">เริ่มภารกิจ!</button>
+              <button id="btnQuick" class="btn" type="button">เล่นแบบไม่ใส่ชื่อ</button>
+            </div>
+
+            <p id="tip" class="sub" style="margin-top:12px;margin-bottom:0;">
+              ✨ กดเลือกคำตอบแล้วค่อยกด “ข้อต่อไป” • สลับภาษาได้ตลอดเวลา
+            </p>
+          </div>
+
+          <div class="panel">
+            <h3 style="margin:0 0 8px; letter-spacing:.2px;" id="howTitle">วิธีเล่น</h3>
+            <ul id="howList" style="margin:0; padding-left:18px; color:rgba(255,255,255,.78); line-height:1.65; font-weight:700;">
+              <li>ตอบให้ครบ 30 ข้อ</li>
+              <li>ตอบถูก = 🙂 + ได้คะแนน</li>
+              <li>ตอบผิด = 😠 + ระบบโชว์คำตอบที่ถูก</li>
+              <li>จบแล้วดูเฉลยทั้งหมดได้</li>
+            </ul>
+            <div style="margin-top:12px; padding:12px; border-radius:16px; border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.18);">
+              <div style="font-weight:900;" id="noteTitle">หมายเหตุ</div>
+              <div style="color:rgba(255,255,255,.70); font-weight:700; margin-top:4px;" id="noteText">
+                ชุดนี้ออกแบบให้เข้าใจง่าย เหมาะสำหรับทบทวนความรู้พื้นฐาน
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- QUIZ SCREEN -->
+      <section id="screenQuiz" class="screen">
+        <div class="hud">
+          <div class="left">
+            <span class="badge" id="playerBadge">ผู้เล่น: -</span>
+            <span class="badge" id="scoreBadge">คะแนน: 0</span>
+            <span class="badge" id="sectionBadge">หมวด: -</span>
+          </div>
+          <div class="bar" aria-label="Progress bar"><div id="progressFill"></div></div>
+        </div>
+
+        <div class="q-area">
+          <div class="q-meta">
+            <div id="qCount">ข้อ 1/30</div>
+            <div id="qHint">เลือกคำตอบที่ถูกที่สุด</div>
+          </div>
+
+          <h3 id="qText" class="q-title">คำถาม</h3>
+
+          <div id="options" class="options"></div>
+
+          <div id="feedback" class="feedback hide" role="status" aria-live="polite">
+            <div class="emoji" id="fbEmoji">🙂</div>
+            <div class="fb-text">
+              <b id="fbTitle">ถูกต้อง!</b>
+              <span id="fbDetail">เก่งมาก ทำต่อเลย!</span>
+            </div>
+            <div class="actions" style="margin-top:0;">
+              <button id="btnNext" class="btn btn-primary" type="button">ข้อต่อไป ➜</button>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="btnBackHome" class="btn btn-ghost" type="button">⟵ หน้าแรก</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RESULT SCREEN -->
+      <section id="screenResult" class="screen">
+        <div class="result">
+          <div class="scorebox">
+            <div class="score-top">
+              <div class="player">
+                <span id="resultPlayer">ผู้เล่น: -</span>
+                <span class="chip" id="resultLang">TH</span>
+              </div>
+              <span class="chip" id="resultMode">Sci-Fi Mode</span>
+            </div>
+            <div class="big-score" id="resultScore">0/30</div>
+            <p class="result-msg" id="resultMsg">เยี่ยมมาก! พร้อมดูเฉลยไหม?</p>
+
+            <div class="actions" style="justify-content:flex-start; margin-top:14px;">
+              <button id="btnToggleReview" class="btn btn-primary" type="button">📌 ดูเฉลยหลังสอบ</button>
+              <button id="btnRestart" class="btn" type="button">🔄 เล่นใหม่</button>
+              <button id="btnHome" class="btn btn-ghost" type="button">⟵ หน้าแรก</button>
+            </div>
+          </div>
+
+          <div id="reviewBox" class="review">
+            <h3 id="reviewTitle">เฉลยทั้งหมด (พร้อมคำตอบที่เลือก)</h3>
+            <div id="reviewList"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      © Kru Pai Classroom • Offline HTML Quiz • Neon Sci-Fi Theme
+    </footer>
+  </div>
+
+  <script>
+    /***********************
+     * 2-Language UI TEXTS *
+     ***********************/
+    const UI = {
+      th: {
+        subtitle: "พืช 15 ข้อ + สัตว์ 15 ข้อ • 4 ตัวเลือก • มีเฉลยหลังจบ",
+        langLabel: "ภาษา",
+        startTitle: "🚀 ภารกิจชีววิทยา: โหมดไซไฟ",
+        startSub: "ทำให้ครบ 30 ข้อ แล้วดูคะแนน+เฉลยแบบจ๊าบๆ ได้เลย!",
+        tagQ: "ข้อ",
+        tag4: "4 ตัวเลือก",
+        tag2L: "2 ภาษา",
+        nameLabel: "ชื่อผู้เล่น",
+        namePh: "พิมพ์ชื่อของคุณ...",
+        startBtn: "เริ่มภารกิจ!",
+        quickBtn: "เล่นแบบไม่ใส่ชื่อ",
+        tip: "✨ กดเลือกคำตอบแล้วค่อยกด “ข้อต่อไป” • สลับภาษาได้ตลอดเวลา",
+        howTitle: "วิธีเล่น",
+        howList: [
+          "ตอบให้ครบ 30 ข้อ",
+          "ตอบถูก = 🙂 + ได้คะแนน",
+          "ตอบผิด = 😠 + ระบบโชว์คำตอบที่ถูก",
+          "จบแล้วดูเฉลยทั้งหมดได้"
+        ],
+        noteTitle: "หมายเหตุ",
+        noteText: "ชุดนี้ออกแบบให้เข้าใจง่าย เหมาะสำหรับทบทวนความรู้พื้นฐาน",
+        playerPrefix: "ผู้เล่น:",
+        scorePrefix: "คะแนน:",
+        sectionPrefix: "หมวด:",
+        hint: "เลือกคำตอบที่ถูกที่สุด",
+        next: "ข้อต่อไป ➜",
+        backHome: "⟵ หน้าแรก",
+        qCountFmt: (i,n)=>`ข้อ ${i}/${n}`,
+        sectionPlants: "พืช",
+        sectionAnimals: "สัตว์",
+        correctTitle: "ถูกต้อง!",
+        correctDetail: "เก่งมาก ทำต่อเลย!",
+        wrongTitle: "ยังไม่ใช่จ้า!",
+        wrongDetail: "ไม่เป็นไร ข้อต่อไปได้เลย!",
+        resultPlayer: (name)=>`ผู้เล่น: ${name || "-"}`,
+        resultMsg: (score,total)=>{
+          const pct = Math.round((score/total)*100);
+          if(pct>=90) return "โหดมาก! คุณคือสายวิทย์ไซไฟตัวจริง 🔥";
+          if(pct>=75) return "ยอดเยี่ยม! ใกล้เต็มแล้วนะ ✨";
+          if(pct>=60) return "ดีมาก! ทบทวนอีกนิดจะปัง 💪";
+          return "เริ่มได้ดี! เล่นซ้ำแล้วเก่งขึ้นแน่ 🚀";
+        },
+        showReview: "📌 ดูเฉลยหลังสอบ",
+        hideReview: "ซ่อนเฉลย",
+        restart: "🔄 เล่นใหม่",
+        reviewTitle: "เฉลยทั้งหมด (พร้อมคำตอบที่เลือก)",
+        yourAnswer: "คุณเลือก",
+        correctAnswer: "คำตอบที่ถูก",
+      },
+      en: {
+        subtitle: "15 Plant + 15 Animal questions • 4 choices • Full answer review",
+        langLabel: "Lang",
+        startTitle: "🚀 Biology Mission: Sci-Fi Mode",
+        startSub: "Finish 30 questions, then view your score + full answers!",
+        tagQ: "Qs",
+        tag4: "4 Choices",
+        tag2L: "2 Languages",
+        nameLabel: "Player Name",
+        namePh: "Type your name...",
+        startBtn: "Start Mission!",
+        quickBtn: "Play without name",
+        tip: "✨ Choose an answer, then tap “Next” • You can switch language anytime",
+        howTitle: "How to play",
+        howList: [
+          "Answer all 30 questions",
+          "Correct = 🙂 + score",
+          "Wrong = 😠 + the correct answer is shown",
+          "After finishing, review all answers"
+        ],
+        noteTitle: "Note",
+        noteText: "Designed for quick revision of core biology knowledge",
+        playerPrefix: "Player:",
+        scorePrefix: "Score:",
+        sectionPrefix: "Section:",
+        hint: "Choose the best answer",
+        next: "Next ➜",
+        backHome: "⟵ Home",
+        qCountFmt: (i,n)=>`Q ${i}/${n}`,
+        sectionPlants: "Plants",
+        sectionAnimals: "Animals",
+        correctTitle: "Correct!",
+        correctDetail: "Nice! Keep going!",
+        wrongTitle: "Not quite!",
+        wrongDetail: "No worries—next one!",
+        resultPlayer: (name)=>`Player: ${name || "-"}`,
+        resultMsg: (score,total)=>{
+          const pct = Math.round((score/total)*100);
+          if(pct>=90) return "Insane! You’re a real Sci-Fi Bio ace 🔥";
+          if(pct>=75) return "Great job! Almost perfect ✨";
+          if(pct>=60) return "Nice! A bit more review and you’ll shine 💪";
+          return "Good start! Replay to level up 🚀";
+        },
+        showReview: "📌 Show Answer Review",
+        hideReview: "Hide Review",
+        restart: "🔄 Restart",
+        reviewTitle: "Answer Review (with your choice)",
+        yourAnswer: "You chose",
+        correctAnswer: "Correct",
+      }
+    };
+
+    /***********************
+     * QUESTION BANK (30)  *
+     ***********************/
+    const QUESTIONS = [
+      // ===== Plants (15) =====
+      {
+        section: "plants",
+        th: "กระบวนการสังเคราะห์ด้วยแสงของพืช ส่วนใหญ่เกิดขึ้นที่บริเวณใดของใบมากที่สุด?",
+        en: "Where does photosynthesis occur the most in a leaf?",
+        choices: {
+          th: ["ผิวใบชั้นบน (Upper epidermis)", "เนื้อเยื่อพาลิเซด (Palisade mesophyll)", "เนื้อเยื่อสปองจี (Spongy mesophyll)", "เส้นใบ (Veins)"],
+          en: ["Upper epidermis", "Palisade mesophyll", "Spongy mesophyll", "Leaf veins"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "คลอโรฟิลล์ (Chlorophyll) ทำหน้าที่อะไรในกระบวนการสร้างอาหารของพืช?",
+        en: "What is the role of chlorophyll in photosynthesis?",
+        choices: {
+          th: ["เก็บสะสมอาหารไว้ในใบ", "ดูดกลืนพลังงานแสงเพื่อใช้ในการสังเคราะห์ด้วยแสง", "ลำเลียงอาหารไปยังส่วนต่าง ๆ", "ป้องกันแมลงศัตรูพืช"],
+          en: ["Store food in leaves", "Absorb light energy for photosynthesis", "Transport food to other parts", "Protect the plant from insects"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "พืชใช้ก๊าซชนิดใดในการสังเคราะห์ด้วยแสง และปล่อยก๊าซชนิดใดออกมาเป็นผลพลอยได้?",
+        en: "Which gas do plants use for photosynthesis, and which gas is released as a byproduct?",
+        choices: {
+          th: ["ใช้ O₂ และปล่อย CO₂", "ใช้ CO₂ และปล่อย O₂", "ใช้ N₂ และปล่อย O₂", "ใช้ CO₂ และปล่อย N₂"],
+          en: ["Use O₂, release CO₂", "Use CO₂, release O₂", "Use N₂, release O₂", "Use CO₂, release N₂"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "ไซเล็ม (Xylem) และ โฟลเอ็ม (Phloem) ทำหน้าที่แตกต่างกันอย่างไร?",
+        en: "How do xylem and phloem differ in function?",
+        choices: {
+          th: ["ไซเล็มลำเลียงอาหาร / โฟลเอ็มลำเลียงน้ำ", "ไซเล็มลำเลียงน้ำและแร่ธาตุ / โฟลเอ็มลำเลียงอาหาร", "ไซเล็มสร้างอาหาร / โฟลเอ็มสังเคราะห์แสง", "ทั้งสองทำหน้าที่เหมือนกัน"],
+          en: ["Xylem transports food / Phloem transports water", "Xylem transports water & minerals / Phloem transports sugars (food)", "Xylem makes food / Phloem does photosynthesis", "They do the same job"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "ส่วนใดของดอกไม้ที่ทำหน้าที่ในการ “ล่อแมลง” เพื่อช่วยในการผสมเกสร?",
+        en: "Which flower part mainly attracts insects for pollination?",
+        choices: {
+          th: ["กลีบเลี้ยง", "กลีบดอก", "ยอดเกสรตัวเมีย", "รังไข่"],
+          en: ["Sepals", "Petals", "Stigma", "Ovary"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "การสืบพันธุ์แบบอาศัยเพศของพืชเกิดขึ้นที่ส่วนประกอบใด?",
+        en: "Where does sexual reproduction in plants occur?",
+        choices: {
+          th: ["ราก", "ใบ", "ดอก", "ลำต้น"],
+          en: ["Roots", "Leaves", "Flowers", "Stems"]
+        },
+        correct: 2
+      },
+      {
+        section: "plants",
+        th: "การคายน้ำของพืชส่วนใหญ่เกิดขึ้นที่บริเวณใด และผ่านโครงสร้างที่เรียกว่าอะไร?",
+        en: "Where does most transpiration occur, and through what structure?",
+        choices: {
+          th: ["ที่ราก ผ่านขนราก", "ที่ท้องใบ ผ่านปากใบ (Stomata)", "ที่ลำต้น ผ่านผิวเปลือก", "ที่ดอก ผ่านละอองเกสร"],
+          en: ["Roots via root hairs", "Lower leaf surface via stomata", "Stem via bark", "Flowers via pollen"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "พืชใบเลี้ยงเดี่ยวและพืชใบเลี้ยงคู่ มีความแตกต่างกันอย่างไรในเรื่องของระบบราก?",
+        en: "How do monocots and dicots differ in root systems?",
+        choices: {
+          th: ["ใบเลี้ยงเดี่ยวรากแก้ว / ใบเลี้ยงคู่รากฝอย", "ใบเลี้ยงเดี่ยวรากฝอย / ใบเลี้ยงคู่รากแก้ว", "ทั้งสองเป็นรากแก้วเหมือนกัน", "ทั้งสองเป็นรากฝอยเหมือนกัน"],
+          en: ["Monocots: taproot / Dicots: fibrous", "Monocots: fibrous / Dicots: taproot", "Both have taproots", "Both have fibrous roots"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "จงยกตัวอย่างพืชที่สะสมอาหารไว้ที่ “ราก” มาอย่างน้อย 3 ชนิด",
+        en: "Which set includes plants that store food in the root? (Choose the best set)",
+        choices: {
+          th: ["แครอท + หัวไชเท้า + มันสำปะหลัง", "มันฝรั่ง + ขิง + หอมหัวใหญ่", "อ้อย + กล้วย + เผือก", "ผักกาดหอม + กะหล่ำปลี + ผักโขม"],
+          en: ["Carrot + radish + cassava", "Potato + ginger + onion", "Sugarcane + banana + taro", "Lettuce + cabbage + spinach"]
+        },
+        correct: 0
+      },
+      {
+        section: "plants",
+        th: "การปักชำและการตอนกิ่ง จัดเป็นการสืบพันธุ์ประเภทใด (อาศัยเพศ หรือ ไม่อาศัยเพศ)?",
+        en: "Cutting and air-layering are which type of reproduction?",
+        choices: {
+          th: ["อาศัยเพศ", "ไม่อาศัยเพศ (ขยายพันธุ์แบบไม่อาศัยเพศ)", "ทั้งสองอย่างพร้อมกัน", "ไม่ใช่การสืบพันธุ์"],
+          en: ["Sexual reproduction", "Asexual (vegetative propagation)", "Both at the same time", "Not reproduction"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "เมื่อพืชได้รับการผสมเกสรแล้ว รังไข่ (Ovary) จะเจริญไปเป็นส่วนใดของผลไม้?",
+        en: "After fertilization, the ovary develops into which part?",
+        choices: {
+          th: ["เมล็ด", "ผล", "ใบเลี้ยง", "ราก"],
+          en: ["Seed", "Fruit", "Cotyledon", "Root"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "พืชชนิดใดต่อไปนี้จัดเป็นพืชไม่มีดอก: มอส, กุหลาบ, เฟิร์น, ทานตะวัน (เลือกได้มากกว่า 1)",
+        en: "Which are non-flowering plants among: moss, rose, fern, sunflower?",
+        choices: {
+          th: ["มอสและเฟิร์น", "กุหลาบและทานตะวัน", "มอสและกุหลาบ", "เฟิร์นและทานตะวัน"],
+          en: ["Moss and fern", "Rose and sunflower", "Moss and rose", "Fern and sunflower"]
+        },
+        correct: 0
+      },
+      {
+        section: "plants",
+        th: "ปากใบ (Stomata) มักจะพบที่บริเวณท้องใบหรือหลังใบมากกว่ากัน เพราะเหตุใด?",
+        en: "Stomata are usually found more on the lower leaf surface. Why?",
+        choices: {
+          th: ["เพราะรับแสงได้มากกว่า", "เพื่อลดการสูญเสียน้ำจากแสงแดดและลม", "เพื่อดูดซับอาหารจากอากาศ", "เพราะมีคลอโรฟิลล์มากกว่า"],
+          en: ["Because it receives more light", "To reduce water loss from sun and wind", "To absorb food from the air", "Because it has more chlorophyll"]
+        },
+        correct: 1
+      },
+      {
+        section: "plants",
+        th: "พืชต้องการแร่ธาตุหลัก 3 ชนิด คือ N, P, K ซึ่งย่อมาจากธาตุอะไรบ้าง?",
+        en: "Plants need three primary macronutrients: N, P, K. What do they stand for?",
+        choices: {
+          th: ["Nitrogen, Phosphorus, Potassium", "Neon, Plutonium, Krypton", "Nitrate, Protein, Kernel", "Nitrogen, Proton, Krypton"],
+          en: ["Nitrogen, Phosphorus, Potassium", "Neon, Plutonium, Krypton", "Nitrate, Protein, Kernel", "Nitrogen, Proton, Krypton"]
+        },
+        correct: 0
+      },
+      {
+        section: "plants",
+        th: "พืชกินแมลง (เช่น กาบหอยแครง) ดักจับแมลงเพื่อทดแทนธาตุอาหารชนิดใดที่ขาดแคลนในดิน?",
+        en: "Carnivorous plants trap insects mainly to obtain which nutrient lacking in soil?",
+        choices: {
+          th: ["ไนโตรเจน (N)", "ฟอสฟอรัส (P)", "โพแทสเซียม (K)", "แคลเซียม (Ca)"],
+          en: ["Nitrogen (N)", "Phosphorus (P)", "Potassium (K)", "Calcium (Ca)"]
+        },
+        correct: 0
+      },
+
+      // ===== Animals (15) =====
+      {
+        section: "animals",
+        th: "สัตว์ในกลุ่มใดที่มีอุณหภูมิร่างกายคงที่ ไม่เปลี่ยนแปลงตามสภาพแวดล้อม (สัตว์เลือดอุ่น)?",
+        en: "Which groups are warm-blooded (maintain constant body temperature)?",
+        choices: {
+          th: ["ปลาและสัตว์สะเทินน้ำสะเทินบก", "สัตว์เลื้อยคลานและปลา", "นกและสัตว์เลี้ยงลูกด้วยนม", "สัตว์สะเทินน้ำสะเทินบกและสัตว์เลื้อยคลาน"],
+          en: ["Fish and amphibians", "Reptiles and fish", "Birds and mammals", "Amphibians and reptiles"]
+        },
+        correct: 2
+      },
+      {
+        section: "animals",
+        th: "การปฏิสนธิภายนอก มักพบในกลุ่มสัตว์ประเภทใดบ้าง?",
+        en: "External fertilization is commonly found in which animals?",
+        choices: {
+          th: ["ปลาและสัตว์สะเทินน้ำสะเทินบก", "นกและสัตว์เลี้ยงลูกด้วยนม", "สัตว์เลื้อยคลานและนก", "แมลงและสัตว์เลี้ยงลูกด้วยนม"],
+          en: ["Fish and amphibians", "Birds and mammals", "Reptiles and birds", "Insects and mammals"]
+        },
+        correct: 0
+      },
+      {
+        section: "animals",
+        th: "สัตว์ที่มีกระดูกสันหลังแบ่งออกเป็นกี่ประเภท อะไรบ้าง?",
+        en: "Vertebrates are divided into how many main groups? Which are they?",
+        choices: {
+          th: ["4 ประเภท: ปลา สัตว์สะเทินน้ำสะเทินบก สัตว์เลื้อยคลาน นก", "5 ประเภท: ปลา สัตว์สะเทินน้ำสะเทินบก สัตว์เลื้อยคลาน นก สัตว์เลี้ยงลูกด้วยนม", "6 ประเภท: เพิ่มแมลง", "3 ประเภท: บก น้ำ อากาศ"],
+          en: ["4 groups: fish, amphibians, reptiles, birds", "5 groups: fish, amphibians, reptiles, birds, mammals", "6 groups: plus insects", "3 groups: land, water, air"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "วาฬและโลมา จัดเป็นสัตว์กลุ่มปลาหรือไม่ เพราะเหตุใด?",
+        en: "Are whales and dolphins fish? Why?",
+        choices: {
+          th: ["ใช่ เพราะอยู่ในน้ำและมีครีบ", "ไม่ใช่ เพราะหายใจด้วยปอดและเลี้ยงลูกด้วยน้ำนม", "ใช่ เพราะมีเกล็ด", "ไม่ใช่ เพราะไม่มีหาง"],
+          en: ["Yes, because they live in water and have fins", "No, because they breathe with lungs and nurse their young", "Yes, because they have scales", "No, because they have no tail"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "สัตว์ชนิดใดที่มีวงจรชีวิตแบบ “การเปลี่ยนแปลงรูปร่างสมบูรณ์” (Complete Metamorphosis) 4 ขั้นตอน?",
+        en: "Which animal shows complete metamorphosis (egg–larva–pupa–adult)?",
+        choices: {
+          th: ["ผีเสื้อ", "ตั๊กแตน", "กบ", "งู"],
+          en: ["Butterfly", "Grasshopper", "Frog", "Snake"]
+        },
+        correct: 0
+      },
+      {
+        section: "animals",
+        th: "สัตว์ที่กินทั้งพืชและสัตว์เป็นอาหาร (เช่น คน, หมี, ไก่) เรียกว่าอะไรในภาษาทางวิทยาศาสตร์?",
+        en: "Animals that eat both plants and animals are called what?",
+        choices: {
+          th: ["Herbivore", "Carnivore", "Omnivore", "Decomposer"],
+          en: ["Herbivore", "Carnivore", "Omnivore", "Decomposer"]
+        },
+        correct: 2
+      },
+      {
+        section: "animals",
+        th: "อวัยวะใดที่ปลาใช้ในการแลกเปลี่ยนก๊าซและหายใจในน้ำ?",
+        en: "Which organ do fish use to exchange gases and breathe in water?",
+        choices: {
+          th: ["ปอด", "เหงือก", "หลอดลม", "ผิวหนัง"],
+          en: ["Lungs", "Gills", "Trachea", "Skin"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "สัตว์เลื้อยคลานกับสัตว์สะเทินน้ำสะเทินบก มีความแตกต่างกันที่ลักษณะผิวหนังอย่างไร?",
+        en: "How do reptiles and amphibians differ in skin characteristics?",
+        choices: {
+          th: ["สัตว์เลื้อยคลานผิวหนังชื้น / สัตว์สะเทินน้ำสะเทินบกผิวแห้งเป็นเกล็ด", "สัตว์เลื้อยคลานผิวแห้งเป็นเกล็ด / สัตว์สะเทินน้ำสะเทินบกผิวชื้น", "ทั้งสองผิวหนังเหมือนกัน", "ทั้งสองมีขนปกคลุม"],
+          en: ["Reptiles moist / Amphibians dry & scaly", "Reptiles dry & scaly / Amphibians moist", "They have the same skin", "Both are covered with fur"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "การพรางตัว (Camouflage) ของสัตว์มีประโยชน์หลักในเรื่องใดบ้าง?",
+        en: "Camouflage mainly helps animals in which ways?",
+        choices: {
+          th: ["ดึงดูดคู่", "ซ่อนตัวจากศัตรูและช่วยล่าเหยื่อ", "ทำให้โตเร็วขึ้น", "ช่วยย่อยอาหารให้เร็วขึ้น"],
+          en: ["Attract mates", "Hide from predators and help catch prey", "Grow faster", "Digest food faster"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "จงบอกความแตกต่างระหว่างสัตว์ที่มีกระดูกสันหลัง และสัตว์ไม่มีกระดูกสันหลัง มาพอสังเขป",
+        en: "What is the key difference between vertebrates and invertebrates?",
+        choices: {
+          th: ["สัตว์มีกระดูกสันหลังมีแนวกระดูกสันหลัง / สัตว์ไม่มีกระดูกสันหลังไม่มี", "สัตว์มีกระดูกสันหลังไม่มีหัว / สัตว์ไม่มีกระดูกสันหลังมีหัว", "สัตว์มีกระดูกสันหลังอยู่ในน้ำเท่านั้น", "สัตว์ไม่มีกระดูกสันหลังหายใจด้วยปอดเสมอ"],
+          en: ["Vertebrates have a backbone / Invertebrates do not", "Vertebrates have no head / Invertebrates have a head", "Vertebrates live only in water", "Invertebrates always breathe with lungs"]
+        },
+        correct: 0
+      },
+      {
+        section: "animals",
+        th: "สัตว์ชนิดใดออกลูกเป็นไข่แต่เลี้ยงลูกด้วยน้ำนม?",
+        en: "Which animal lays eggs but feeds its young with milk?",
+        choices: {
+          th: ["ตุ่นปากเป็ด (Platypus)", "โลมา", "ค้างคาว", "ไก่"],
+          en: ["Platypus", "Dolphin", "Bat", "Chicken"]
+        },
+        correct: 0
+      },
+      {
+        section: "animals",
+        th: "ในห่วงโซ่อาหาร สัตว์ที่กินพืช (Herbivore) จัดเป็นผู้บริโภคอันดับที่เท่าไหร่?",
+        en: "In a food chain, herbivores are which level of consumers?",
+        choices: {
+          th: ["ผู้ผลิต", "ผู้บริโภคอันดับที่ 1", "ผู้บริโภคอันดับที่ 2", "ผู้บริโภคอันดับที่ 3"],
+          en: ["Producers", "Primary consumers", "Secondary consumers", "Tertiary consumers"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "นกมีลักษณะโครงสร้างกระดูกอย่างไรที่ช่วยให้สามารถบินได้สะดวก?",
+        en: "What bone feature helps birds fly more easily?",
+        choices: {
+          th: ["กระดูกทึบและหนักมาก", "กระดูกกลวงและน้ำหนักเบา", "กระดูกไม่มีข้อต่อ", "กระดูกทำจากกระดาษ"],
+          en: ["Very solid and heavy bones", "Hollow, lightweight bones", "Bones without joints", "Bones made of paper"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "สัตว์จำพวกแมลง มีขาจำนวนกี่คู่?",
+        en: "How many pairs of legs do insects have?",
+        choices: {
+          th: ["2 คู่", "3 คู่", "4 คู่", "5 คู่"],
+          en: ["2 pairs", "3 pairs", "4 pairs", "5 pairs"]
+        },
+        correct: 1
+      },
+      {
+        section: "animals",
+        th: "การจำศีล (Hibernation) ของสัตว์มีจุดประสงค์เพื่ออะไร?",
+        en: "What is the main purpose of hibernation?",
+        choices: {
+          th: ["เพื่อหาคู่ผสมพันธุ์", "เพื่อประหยัดพลังงานในช่วงอากาศหนาว/อาหารขาดแคลน", "เพื่อเพิ่มความเร็วในการเคลื่อนไหว", "เพื่อเปลี่ยนสีผิวหนัง"],
+          en: ["To find a mate", "To save energy during cold seasons/food shortage", "To move faster", "To change skin color"]
+        },
+        correct: 1
+      }
+    ];
+
+    /***********************
+     * APP STATE & HELPERS *
+     ***********************/
+    const $ = (id)=>document.getElementById(id);
+
+    const screens = {
+      start: $("screenStart"),
+      quiz: $("screenQuiz"),
+      result: $("screenResult")
+    };
+
+    let lang = localStorage.getItem("kp_lang") || "th";
+    let playerName = "";
+    let quiz = [];             // shuffled questions
+    let idx = 0;               // current index
+    let score = 0;
+    let answered = false;
+    let userAnswers = [];      // store selected option index per question
+
+    function setLang(newLang){
+      lang = newLang;
+      localStorage.setItem("kp_lang", lang);
+      $("btnTH").classList.toggle("active", lang==="th");
+      $("btnEN").classList.toggle("active", lang==="en");
+      applyUI();
+      renderIfInQuiz();
+      renderIfInResult();
+    }
+
+    function applyUI(){
+      const t = UI[lang];
+      $("subtitle").textContent = t.subtitle;
+      $("langLabel").textContent = t.langLabel;
+
+      $("startTitle").textContent = t.startTitle;
+      $("startSub").textContent = t.startSub;
+      $("tagQ").textContent = t.tagQ;
+      $("tag4").textContent = t.tag4;
+      $("tag2L").textContent = t.tag2L;
+
+      $("nameLabel").textContent = t.nameLabel;
+      $("playerName").placeholder = t.namePh;
+
+      $("btnStart").textContent = t.startBtn;
+      $("btnQuick").textContent = t.quickBtn;
+      $("tip").textContent = t.tip;
+
+      $("howTitle").textContent = t.howTitle;
+      const list = $("howList");
+      list.innerHTML = "";
+      t.howList.forEach(x=>{
+        const li = document.createElement("li");
+        li.textContent = x;
+        list.appendChild(li);
+      });
+      $("noteTitle").textContent = t.noteTitle;
+      $("noteText").textContent = t.noteText;
+
+      $("qHint").textContent = t.hint;
+      $("btnNext").textContent = t.next;
+      $("btnBackHome").textContent = t.backHome;
+      $("btnHomeTop").textContent = t.backHome;
+      $("btnHome").textContent = t.backHome;
+      $("btnRestart").textContent = t.restart;
+
+      $("reviewTitle").textContent = t.reviewTitle;
+      // review toggle text handled dynamically
+    }
+
+    function showScreen(name){
+      Object.values(screens).forEach(s=>s.classList.remove("active"));
+      screens[name].classList.add("active");
+      $("btnHomeTop").classList.toggle("hide", name==="start");
+    }
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]] = [a[j],a[i]];
+      }
+      return a;
+    }
+
+    function getSectionLabel(section){
+      const t = UI[lang];
+      return section==="plants" ? t.sectionPlants : t.sectionAnimals;
+    }
+
+    function setBadges(){
+      const t = UI[lang];
+      $("playerBadge").textContent = `${t.playerPrefix} ${playerName || "-"}`;
+      $("scoreBadge").textContent = `${t.scorePrefix} ${score}`;
+      const currentSection = quiz[idx]?.section || "plants";
+      $("sectionBadge").textContent = `${t.sectionPrefix} ${getSectionLabel(currentSection)}`;
+    }
+
+    function renderQuestion(){
+      answered = false;
+      $("feedback").classList.add("hide");
+
+      const t = UI[lang];
+      const q = quiz[idx];
+      $("qCount").textContent = t.qCountFmt(idx+1, quiz.length);
+
+      const pct = Math.round(((idx)/quiz.length)*100);
+      $("progressFill").style.width = pct + "%";
+
+      $("qText").textContent = (lang==="th" ? q.th : q.en);
+
+      // render options
+      const optBox = $("options");
+      optBox.innerHTML = "";
+      const choices = (lang==="th" ? q.choices.th : q.choices.en);
+
+      choices.forEach((text, i)=>{
+        const b = document.createElement("button");
+        b.className = "opt";
+        b.type = "button";
+        b.textContent = text;
+        b.addEventListener("click", ()=> selectAnswer(i));
+        optBox.appendChild(b);
+      });
+
+      setBadges();
+    }
+
+    function disableOptions(){
+      [...$("options").children].forEach(btn=>btn.disabled = true);
+    }
+
+    function markOptions(selected){
+      const q = quiz[idx];
+      const correct = q.correct;
+      const nodes = [...$("options").children];
+      nodes.forEach((btn,i)=>{
+        if(i===correct) btn.classList.add("correct");
+        if(i===selected && selected!==correct) btn.classList.add("wrong");
+      });
+    }
+
+    
+    function showEmojiOverlay(emoji){
+      const d = document.createElement("div");
+      d.className = "emoji-overlay";
+      d.textContent = emoji;
+      document.body.appendChild(d);
+      setTimeout(()=>d.remove(), 650);
+    }
+
+
+    function selectAnswer(choiceIndex){
+      if(answered) return;
+      answered = true;
+
+      const t = UI[lang];
+      const q = quiz[idx];
+      const correct = q.correct;
+
+      userAnswers[idx] = choiceIndex;
+
+      disableOptions();
+      markOptions(choiceIndex);
+
+      const ok = choiceIndex === correct;
+      if(ok) score++;
+      playClickSound(ok);
+      showEmojiOverlay(ok ? "😄" : "😠");
+
+      // feedback box
+      $("fbEmoji").textContent = ok ? "🙂" : "😠";
+      $("fbTitle").textContent = ok ? t.correctTitle : t.wrongTitle;
+      $("fbDetail").textContent = ok ? t.correctDetail : t.wrongDetail;
+      $("feedback").classList.remove("hide");
+
+      // update score badge immediately
+      $("scoreBadge").textContent = `${t.scorePrefix} ${score}`;
+    }
+
+    function nextQuestion(){
+      if(!answered) return; // must answer first
+      idx++;
+      if(idx >= quiz.length){
+        finishQuiz();
+      }else{
+        renderQuestion();
+      }
+    }
+
+    function finishQuiz(){
+      $("progressFill").style.width = "100%";
+      showScreen("result");
+      renderResult();
+    }
+
+    function renderResult(){
+      const t = UI[lang];
+      $("resultPlayer").textContent = t.resultPlayer(playerName);
+      $("resultLang").textContent = lang.toUpperCase();
+      $("resultScore").textContent = `${score}/${quiz.length}`;
+      $("resultMsg").textContent = t.resultMsg(score, quiz.length);
+
+      // default: review hidden
+      $("reviewBox").classList.remove("active");
+      $("btnToggleReview").textContent = t.showReview;
+
+      // build review list
+      buildReviewList();
+    }
+
+    function buildReviewList(){
+      const t = UI[lang];
+      const box = $("reviewList");
+      box.innerHTML = "";
+
+      quiz.forEach((q,i)=>{
+        const wrap = document.createElement("div");
+        wrap.className = "qa";
+
+        const qEl = document.createElement("div");
+        qEl.className = "q";
+        qEl.textContent = (lang==="th" ? `ข้อ ${i+1}: ` : `Q ${i+1}: `) + (lang==="th" ? q.th : q.en);
+
+        const ua = userAnswers[i];
+        const correct = q.correct;
+
+        const aEl = document.createElement("div");
+        aEl.className = "a";
+
+        const ok = ua === correct;
+        const mark = document.createElement("span");
+        mark.className = "mark " + (ok ? "ok" : "no");
+        mark.textContent = ok ? "✓" : "✗";
+
+        const your = document.createElement("span");
+        your.innerHTML = `<span class="dim">${t.yourAnswer}:</span> ${ (lang==="th" ? q.choices.th[ua] : q.choices.en[ua]) }`;
+
+        const corr = document.createElement("span");
+        corr.innerHTML = `<span class="dim">${t.correctAnswer}:</span> ${ (lang==="th" ? q.choices.th[correct] : q.choices.en[correct]) }`;
+
+        aEl.appendChild(mark);
+        aEl.appendChild(your);
+        aEl.appendChild(corr);
+
+        wrap.appendChild(qEl);
+        wrap.appendChild(aEl);
+        box.appendChild(wrap);
+      });
+    }
+
+    function renderIfInQuiz(){
+      if(screens.quiz.classList.contains("active")){
+        renderQuestion();
+      }
+    }
+    function renderIfInResult(){
+      if(screens.result.classList.contains("active")){
+        renderResult();
+      }
+    }
+
+    function goHome(){
+      idx = 0;
+      score = 0;
+      answered = false;
+      userAnswers = [];
+      showScreen("start");
+    }
+
+    function startGame(withName){
+      const nameInput = $("playerName").value.trim();
+      playerName = withName ? (nameInput || "") : "";
+      quiz = shuffle(QUESTIONS);
+      idx = 0;
+      score = 0;
+      userAnswers = Array(quiz.length).fill(0);
+      showScreen("quiz");
+      renderQuestion();
+    }
+
+    /***********************
+     * EVENTS *
+     ***********************/
+    $("btnTH").addEventListener("click", ()=>setLang("th"));
+    $("btnEN").addEventListener("click", ()=>setLang("en"));
+
+    $("btnStart").addEventListener("click", ()=> startGame(true));
+    $("btnQuick").addEventListener("click", ()=> startGame(false));
+
+    $("btnNext").addEventListener("click", nextQuestion);
+
+    $("btnBackHome").addEventListener("click", goHome);
+    $("btnHomeTop").addEventListener("click", goHome);
+    $("btnHome").addEventListener("click", goHome);
+
+    $("btnRestart").addEventListener("click", ()=>{
+      const currentName = playerName;
+      const stored = $("playerName").value.trim();
+      playerName = currentName || stored || "";
+      quiz = shuffle(QUESTIONS);
+      idx = 0; score = 0; answered = false;
+      userAnswers = Array(quiz.length).fill(0);
+      showScreen("quiz");
+      renderQuestion();
+    });
+$("btnToggleReview").addEventListener("click", ()=>{
+      const t = UI[lang];
+      const box = $("reviewBox");
+      const open = box.classList.toggle("active");
+      if(open){
+        buildReviewList();
+        $("btnToggleReview").textContent = t.hideReview;
+        setTimeout(()=> box.scrollIntoView({behavior:"smooth", block:"start"}), 50);
+      }else{
+        $("btnToggleReview").textContent = t.showReview;
+      }
+    });
+
+    $("playerName").addEventListener("keydown", (e)=>{
+      if(e.key==="Enter") startGame(true);
+    });
+
+    // init
+    applyUI();
+    setLang(lang);
+    showScreen("start");
+  </script>
+</body>
+</html>
